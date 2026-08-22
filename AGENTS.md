@@ -1,3 +1,13 @@
+## Stack rules (non-negotiable)
+
+- Astro v6 + Tailwind v4. Components are `.astro` files: `---` JS fence at top, then plain HTML.
+- Use `class=`, NEVER `className=`. This is HTML, not JSX.
+- No React, no `useState`, no hooks, no `.jsx`/`.tsx` files.
+- Tailwind v4: theme lives in `@theme {}` inside `src/styles/global.css`. There is no `tailwind.config.js` — don't create one.
+- Never hardcode a hex value or a raw color name in markup. Every color comes from a `--color-*` token defined in `@theme`.
+- Interactivity: plain `<script>` tags or CSS only. No client-side framework, no hydration directives (`client:load` etc.) unless explicitly asked.
+- Fonts: `<link>` to Google Fonts in the layout `<head>`, then reference via a `--font-*` token in `@theme`.
+
 ## Development
 
 When starting the dev server, use background mode:
