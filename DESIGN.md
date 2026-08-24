@@ -39,6 +39,101 @@ reasoning so you don't accidentally undo it:
    want to experiment with a second dark slide, that's a real design
    decision to raise with the user first, not a default to reach for.
 
+## Foundational `global.css` block — copy this first, verbatim
+
+This is the single source of truth for `global.css`'s foundation:
+both `@import`s, the `@theme` tokens, the dark-slide override, the
+deck/scroll-snap mechanics, and the reveal/reduced-motion rules — in
+the exact order they must appear in the file. Every later section of
+this document (Color Palette, Typography, Deck mechanics,
+Micro-Animations) explains the *reasoning* behind pieces of this block,
+but the block itself lives only here — copy it once, verbatim, top to
+bottom, as the entire starting content of `global.css`. Do not
+reassemble it yourself from the explanatory sections below; that
+re-derivation is exactly how a stray second `@import` or a malformed
+selector gets introduced. Component-specific CSS (nav, timeline, tags,
+lightbox, buttons — described in prose later in this file) gets
+appended *after* this block, never interleaved inside it.
+
+```css
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;500;700;800&family=Geist+Mono:wght@400;500&family=DM+Sans:wght@400;500;700&display=swap');
+
+@theme {
+  --color-bg:           #F8F7F3;  /* warm paper white, never pure #FFF */
+  --color-bg-subtle:    #EFEAE2;  /* alternate section background, derived */
+  --color-bg-card:      #FDFCFA;  /* derived, marginally lifted off bg */
+  --color-border:       #BCB3A6;  /* warm taupe hairline */
+  --color-text-primary: #302E2C;  /* warm near-black, not pure black */
+  --color-text-secondary: #6B6459;  /* derived, interpolated */
+  --color-text-muted:   #8C8375;  /* derived, interpolated */
+  --color-accent:       #797454;  /* olive, from reference palette */
+  --color-accent-hover: #875F45;  /* warm brown, also from reference palette */
+  --color-accent-text:  #F8F7F3;  /* text on a filled accent button */
+}
+
+section[data-theme="dark"] {
+  --color-bg: #302E2C;
+  --color-bg-subtle: #3D3A35;
+  --color-bg-card: #383530;
+  --color-border: #55504A;
+  --color-text-primary: #F8F7F3;
+  --color-text-secondary: #C9C2B4;
+  --color-text-muted: #9B9284;
+  --color-accent: #B5AE82;
+  --color-accent-hover: #D19E77;
+  --color-accent-text: #302E2C;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-snap-type: y mandatory;
+}
+main.content > section,
+main.content > footer {
+  width: 100%;
+  scroll-snap-align: start;
+  background: var(--color-bg);
+  color: var(--color-text-primary);
+  transition: background-color 0.4s ease, color 0.4s ease;
+}
+main.content > section {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-block: clamp(3rem, 6vw, 5rem);
+}
+.slide-inner {
+  max-width: 760px;
+  width: 100%;
+  margin-inline: auto;
+  padding-inline: clamp(1.5rem, 5vw, 3rem);
+}
+
+.reveal { opacity: 0; transform: translateY(-4rem); transition: opacity 0.6s ease, transform 0.6s ease; }
+.reveal.is-visible { opacity: 1; transform: translateY(0); }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+  .reveal, .reveal.is-visible { opacity: 1; transform: none; }
+}
+```
+
+**Why this exact order matters, in one line each:**
+- Both `@import`s must come first — CSS requires every `@import` to
+  precede all other rules; a build only warns about a violation, it
+  doesn't fail, so a misplaced one ships silently broken.
+- `@theme` before the dark override — the override block re-declares
+  the same token names, so the base values must exist first.
+- The dark override before the deck-mechanics `section` rules — not
+  load-bearing order-wise (custom properties resolve at paint time,
+  not declaration time), but keeping all token-related blocks together
+  before all layout-related blocks keeps the file easy to scan.
+- `.reveal` and reduced-motion last — they're independent of
+  everything above and are pure additions once the foundation exists.
+
 ## Visual Style
 
 - **Aesthetic**: Clean, product-grade, whitespace-first. Bold geometric
@@ -59,20 +154,8 @@ palette for the one dark slide. Do not introduce a second color anywhere,
 including in placeholder or example content, and do not invent a second,
 different "dark mode" system — the mechanism below is the only one.
 
-```css
-@theme {
-  --color-bg:           #F8F7F3;  /* warm paper white, never pure #FFF */
-  --color-bg-subtle:    #EFEAE2;  /* alternate section background, derived */
-  --color-bg-card:      #FDFCFA;  /* derived, marginally lifted off bg */
-  --color-border:       #BCB3A6;  /* warm taupe hairline */
-  --color-text-primary: #302E2C;  /* warm near-black, not pure black */
-  --color-text-secondary: #6B6459;  /* derived, interpolated */
-  --color-text-muted:   #8C8375;  /* derived, interpolated */
-  --color-accent:       #797454;  /* olive, from reference palette */
-  --color-accent-hover: #875F45;  /* warm brown, also from reference palette */
-  --color-accent-text:  #F8F7F3;  /* text on a filled accent button */
-}
-```
+The exact token values live in the "Foundational `global.css` block"
+above — don't retype them here, that block is the only copy.
 
 **Rules:**
 - This khaki-olive-beige accent is the only non-neutral color on the page.
@@ -92,20 +175,8 @@ whole slide with zero per-component overrides — that's the entire
 mechanism, don't build a second one (no separate `theme.css`, no
 hardcoded `#0a0a0a` sidebar background, no `class="dark"` on `<html>`).
 
-```css
-section[data-theme="dark"] {
-  --color-bg: #302E2C;
-  --color-bg-subtle: #3D3A35;
-  --color-bg-card: #383530;
-  --color-border: #55504A;
-  --color-text-primary: #F8F7F3;
-  --color-text-secondary: #C9C2B4;
-  --color-text-muted: #9B9284;
-  --color-accent: #B5AE82;
-  --color-accent-hover: #D19E77;
-  --color-accent-text: #302E2C;
-}
-```
+Again, the exact values are in the "Foundational `global.css` block"
+above, not repeated here.
 
 **Gotcha**: custom properties only cascade to *descendants*. If you ever
 need to reference "the dark slide's color" or "the next slide's color"
@@ -129,9 +200,9 @@ lightbox photo shouldn't get tinted by whichever slide opened it).
   a serif or an italic anywhere on the page, this is a Full Clean
   direction with no literary flourish.
 
-```css
-@import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;500;700;800&family=Geist+Mono:wght@400;500&family=DM+Sans:wght@400;500;700&display=swap');
-```
+This font `@import` is already the second line of the "Foundational
+`global.css` block" above — don't add it again here or anywhere else
+in the file.
 
 | Role | Font | Weight | Size |
 |---|---|---|---|
@@ -247,33 +318,9 @@ both paint edge-to-edge (needed so a dark slide's background fills the
 whole screen) and cap its own width (needed for a readable text column).
 Two elements, not one:
 
-```css
-html {
-  scroll-behavior: smooth;
-  scroll-snap-type: y mandatory;
-}
-main.content > section,
-main.content > footer {
-  width: 100%;
-  scroll-snap-align: start;
-  background: var(--color-bg);
-  color: var(--color-text-primary);
-  transition: background-color 0.4s ease, color 0.4s ease;
-}
-main.content > section {
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding-block: clamp(3rem, 6vw, 5rem);
-}
-.slide-inner {
-  max-width: 760px;
-  width: 100%;
-  margin-inline: auto;
-  padding-inline: clamp(1.5rem, 5vw, 3rem);
-}
-```
+This CSS is already in the "Foundational `global.css` block" above
+(the `html`, `main.content > section`/`footer`, and `.slide-inner`
+rules) — don't retype it here.
 
 Markup shape for every section: `<section id="..." class="reveal">` (add
 `data-theme="dark"` only on `#intro`) wrapping a single `<div
@@ -436,10 +483,9 @@ small — don't build a JS modal to fix it unless asked).
 
 ## Micro-Animations
 
-```css
-.reveal { opacity: 0; transform: translateY(-4rem); transition: opacity 0.6s ease, transform 0.6s ease; }
-.reveal.is-visible { opacity: 1; transform: translateY(0); }
-```
+Both the `.reveal` rules and the reduced-motion override below are
+already in the "Foundational `global.css` block" near the top of this
+file — don't retype them here.
 
 - Every section and the footer carry `.reveal`; `reveal.js` adds
   `.is-visible` via `IntersectionObserver({ threshold: 0.15 })` the
@@ -451,15 +497,8 @@ small — don't build a JS modal to fix it unless asked).
   section boundary transitions background/color over `0.4s ease`.
 - Always include the reduced-motion override — and make sure it also
   turns off smooth scrolling, not just CSS transitions, or arrow-key
-  paging still animates for someone who asked it not to:
-
-```css
-@media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
-  *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
-  .reveal, .reveal.is-visible { opacity: 1; transform: none; }
-}
-```
+  paging still animates for someone who asked it not to (already
+  included in the foundational block above).
 
 ## Imagery
 

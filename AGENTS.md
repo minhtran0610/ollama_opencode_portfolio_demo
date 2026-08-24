@@ -9,8 +9,13 @@
 - No React, no `useState`, no hooks, no `.jsx`/`.tsx` files, no `key={}`
   props anywhere (Astro's `.map()` doesn't need or want a `key`).
 - Tailwind v4: theme lives in `@theme {}` inside `src/styles/global.css`.
-  `global.css` already exists and is already correct — read it, don't
-  regenerate it. There is no `tailwind.config.js` — don't create one.
+  Its current state depends entirely on how far a prior build got —
+  check it yourself (`cat`/Read) before assuming it's empty or already
+  built out; don't trust a claim in any doc about its contents over
+  what the file actually shows you right now. If it needs building out,
+  copy DESIGN.md's "Foundational `global.css` block" verbatim, in that
+  exact order — don't re-derive the CSS yourself. There is no
+  `tailwind.config.js` — don't create one.
 - Every `--color-*` and `--font-*` token in `@theme` auto-generates a
   matching Tailwind utility class. `--color-accent` gives you `text-accent`,
   `bg-accent`, `border-accent`, `ring-accent`, `decoration-accent`.
@@ -109,6 +114,24 @@ Concretely banned, because each one appeared in the failed build:
   catch this either, since it compiles fine; only a real browser request
   reveals the 404. Use the relative form from the File structure section
   below: `<script src="../scripts/reveal.js">`.
+- Writing a second `@import` anywhere in `global.css` other than the
+  two at the very top (Tailwind, then the Google Fonts URL, in that
+  order). CSS requires every `@import` to precede all other rules —
+  one placed after `@theme` or after any selector is invalid CSS, and
+  Astro's build only warns about this, it doesn't fail, so it silently
+  ships broken font loading. Copy DESIGN.md's "Foundational
+  `global.css` block" verbatim, in that exact order; don't re-derive
+  where an `@import` goes from first principles.
+- Writing a CSS selector that tries to cover several components at
+  once with a wildcard or a bare combinator, e.g. `.timeline-*,` or
+  `#work-on-the-side > :,`. Neither is valid CSS — `*` is not a
+  suffix wildcard in a class name, and a combinator (`>`) must be
+  followed by an actual selector, never a bare `:` or a trailing
+  comma. Write one full, literal selector per rule — the same
+  "hardcode, don't loop" principle the Content section applies to
+  markup, applied to CSS: even when two components share a value,
+  write the selector out twice rather than inventing a shorthand that
+  groups them.
 - Loading `global.css` via a `<script>` tag of any kind — CSS is never
   script content, `<script type="module" src="...global.css">` or
   `<script type="module" src="./styles/global.css">` are both wrong
@@ -227,14 +250,18 @@ expecting one shape; `Card.astro` rendered a different, empty one).
   processes this form automatically. Do not use an absolute path like
   `/scripts/reveal.js` or `is:inline` for this file; those only apply to
   scripts served as-is from `public/`, and this file isn't there.
-- `src/styles/global.css` — currently just `@import "tailwindcss";` (one
+- `src/styles/global.css` — starts as just `@import "tailwindcss";` (one
   line, no theme tokens yet — check it yourself before assuming
-  otherwise). You need to add the full `@theme {}` block from
-  `DESIGN.md`'s Color Palette and Typography sections (all `--color-*`
-  and `--font-*` tokens), the `section[data-theme="dark"]` token-override
-  block, the deck/scroll-snap CSS, and the `.reveal` animation rules —
-  all from DESIGN.md. This is foundational — do it first, before any
-  component references a token or class that doesn't exist yet.
+  otherwise). Paste DESIGN.md's "Foundational `global.css` block"
+  verbatim, in the exact order given there — it's already the full,
+  ordered concatenation of both `@import`s, the `@theme {}` tokens,
+  the `section[data-theme="dark"]` override, the deck/scroll-snap CSS,
+  and the `.reveal`/reduced-motion rules, so there's nothing left to
+  assemble or reorder yourself. This is foundational — do it first,
+  before any component references a token or class that doesn't exist
+  yet. Component-specific CSS (nav, timeline, tags, lightbox, etc.)
+  still has to be written from the prose specs further down in
+  DESIGN.md — only the foundational block is copy-paste.
 
 Images already exist in the repo as real binary JPEG photos — a marathon
 finish-line shot and a home-lab rack photo, hundreds of KB to several MB
@@ -274,6 +301,14 @@ items, in build order: `global.css`
 theme tokens, `Header.astro`, `Layout.astro`, `reveal.js`,
 `index.astro`.
 
+**Never add a sixth item.** If you discover new work mid-build (a CSS
+warning to fix, an extra check to run), fold it into the current
+item's own done-check instead of creating a new todo entry. A todo
+list that keeps growing turn over turn is a sign of thrashing, not
+progress, and re-printing a longer list every turn burns context for
+no benefit — five items in, five items out, no matter how many fix
+attempts any one of them takes.
+
 Each item's text must state its own definition of done inline — not
 just a filename. A todo item that just says `Header.astro` is not
 usable; it must say what "done" means for that specific item. Derive
@@ -311,6 +346,34 @@ Context7 if needed). Apply the fix it reports back yourself. A
 subagent starts with a clean context instead of the same reasoning
 that already failed twice — use that instead of repeating a fix that
 didn't work.
+
+## Checkpoint — write progress to disk regularly
+
+A long unbroken session on a local model is fragile: the harness can
+crash mid-session and lose everything since the last file write. Every
+~20 tool calls, pause and overwrite a single file, `PROGRESS.md` at the
+repo root, with three short lines: what's done, what's currently
+broken (exact error text if any), and the exact next command to run.
+This is not a replacement for `todowrite` — the todo list stays the
+source of truth for task state — `PROGRESS.md` is a plain-text resume
+point for whoever picks the session back up. Overwrite it each time,
+don't append; it should always reflect the current moment, not a
+running history.
+
+**If you ever hit this exact error:**
+```
+{"error":{"code":400,"message":"Cannot have 2 or more assistant messages at the end of the list.","type":"invalid_request_error"}}
+```
+this is not a context-length problem, and your next response cannot
+fix it by being shorter or more careful — it's a known opencode bug
+class where a subagent's (`task` tool) result gets spliced back into
+the conversation tagged with the wrong role, producing two assistant
+messages in a row that the provider rejects (see
+`anomalyco/opencode` issues on subagent/history-replay message
+ordering). Don't retry in place and don't try to diagnose it as your
+own mistake. End the session, restart opencode, and resume from
+whatever `todowrite` and `PROGRESS.md` say — that's exactly why both
+exist.
 
 ## Build validation — mandatory after every file
 
