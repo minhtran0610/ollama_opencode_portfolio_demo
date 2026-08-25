@@ -56,8 +56,8 @@ lightbox, buttons — described in prose later in this file) gets
 appended *after* this block, never interleaved inside it.
 
 ```css
-@import "tailwindcss";
 @import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;500;700;800&family=Geist+Mono:wght@400;500&family=DM+Sans:wght@400;500;700&display=swap');
+@import "tailwindcss";
 
 @theme {
   --color-bg:           #F8F7F3;  /* warm paper white, never pure #FFF */
@@ -125,6 +125,16 @@ main.content > section {
 - Both `@import`s must come first — CSS requires every `@import` to
   precede all other rules; a build only warns about a violation, it
   doesn't fail, so a misplaced one ships silently broken.
+- The Google Fonts `@import` must come **before** `@import "tailwindcss"`,
+  not after. This is the opposite of the intuitive "framework first"
+  order, and it's not optional: `@import "tailwindcss"` doesn't stay a
+  single import statement once built — Tailwind v4 inlines its own
+  generated CSS in its place, starting with a non-import `@layer`
+  block. Anything after it in source (including a second `@import`)
+  ends up positioned after that inlined content once built, which is
+  exactly the "@import must precede all other rules" violation this
+  section exists to prevent. Verified empirically: `tailwindcss` first
+  produces the warning, fonts first does not.
 - `@theme` before the dark override — the override block re-declares
   the same token names, so the base values must exist first.
 - The dark override before the deck-mechanics `section` rules — not

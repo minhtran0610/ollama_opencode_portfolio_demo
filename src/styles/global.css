@@ -1,1 +1,459 @@
+/* global.css — Minh Tran portfolio theme.
+ * Full Clean, one palette, one accent, exactly one dark slide.
+ * global.css is imported from Layout.astro (only place it loads); reveal.js
+ * owns the deck interactivity. No second dark system.
+ */
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;500;700;800&family=Geist+Mono:wght@400;500&family=DM+Sans:wght@400;500;700&display=swap');
 @import "tailwindcss";
+
+@theme {
+  --color-bg:           #F8F7F3;  /* warm paper white, never pure #FFF */
+  --color-bg-subtle:    #EFEAE2;  /* alternate section background, derived */
+  --color-bg-card:      #FDFCFA;  /* derived, marginally lifted off bg */
+  --color-border:       #BCB3A6;  /* warm taupe hairline */
+  --color-text-primary: #302E2C;  /* warm near-black, not pure black */
+  --color-text-secondary: #6B6459;  /* derived, interpolated */
+  --color-text-muted:   #8C8375;  /* derived, interpolated */
+  --color-accent:       #797454;  /* olive, from reference palette */
+  --color-accent-hover: #875F45;  /* warm brown, also from reference palette */
+  --color-accent-text:  #F8F7F3;  /* text on a filled accent button */
+  --font-display: "Geist", sans-serif;
+  --font-mono: "Geist Mono", monospace;
+  --font-body: "DM Sans", sans-serif;
+}
+
+section[data-theme="dark"] {
+  --color-bg: #302E2C;
+  --color-bg-subtle: #3D3A35;
+  --color-bg-card: #383530;
+  --color-border: #55504A;
+  --color-text-primary: #F8F7F3;
+  --color-text-secondary: #C9C2B4;
+  --color-text-muted: #9B9284;
+  --color-accent: #B5AE82;
+  --color-accent-hover: #D19E77;
+  --color-accent-text: #302E2C;
+}
+
+/* ---- Base ---- */
+html {
+  scroll-behavior: smooth;
+  scroll-snap-type: y mandatory;
+}
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
+}
+
+/* ---- Deck mechanics: full-bleed slide vs. centered content column ---- */
+main.content > section,
+main.content > footer {
+  width: 100%;
+  scroll-snap-align: start;
+  background: var(--color-bg);
+  color: var(--color-text-primary);
+  transition: background-color 0.4s ease, color 0.4s ease;
+}
+main.content > section {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-block: clamp(3rem, 6vw, 5rem);
+}
+.slide-inner {
+  max-width: 760px;
+  width: 100%;
+  margin-inline: auto;
+  padding-inline: clamp(1.5rem, 5vw, 3rem);
+}
+
+/* ---- Reveal-on-scroll + reduced motion ---- */
+.reveal { opacity: 0; transform: translateY(-4rem); transition: opacity 0.6s ease, transform 0.6s ease; }
+.reveal.is-visible { opacity: 1; transform: translateY(0); }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+  .reveal, .reveal.is-visible { opacity: 1; transform: none; }
+}
+
+/* ---- Top nav (Header.astro, .topnav) ---- */
+.topnav {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-block: 1rem;
+  padding-inline: clamp(1.5rem, 5vw, 3rem);
+  background: color-mix(in srgb, #F8F7F3 88%, transparent);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid #BCB3A6;
+}
+.topnav .brand {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.0625rem;
+  color: #302E2C;
+  text-decoration: none;
+}
+.topnav ul {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.75rem, 2vw, 1.5rem);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.topnav ul li a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #6B6459;
+  text-decoration: none;
+  transition: color 0.18s ease;
+}
+.topnav ul li a:hover {
+  color: #797454;
+}
+.topnav ul li a .conductor {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: transparent;
+  transition: background-color 0.18s ease;
+}
+.topnav ul li a[aria-current="page"] {
+  color: #797454;
+}
+.topnav ul li a[aria-current="page"] .conductor {
+  background: #797454;
+}
+
+/* ---- Slide counter (Layout.astro) ---- */
+.slide-counter {
+  position: fixed;
+  right: clamp(1.25rem, 3vw, 2rem);
+  bottom: clamp(1.25rem, 3vw, 2rem);
+  z-index: 40;
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  color: var(--color-text-primary);
+  mix-blend-mode: difference;
+  filter: invert(1);
+  pointer-events: none;
+}
+.slide-counter-current {
+  color: #797454;
+}
+
+/* ---- Links & CTAs ---- */
+.cta {
+  display: inline-block;
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 0.18s ease;
+}
+.cta:hover {
+  color: var(--color-accent-hover);
+}
+
+.socials {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 0.75rem;
+}
+.socials a {
+  color: var(--color-text-muted);
+  text-decoration: none;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  transition: color 0.18s ease;
+}
+.socials a:hover {
+  color: var(--color-accent);
+}
+
+/* ---- Section number label + title ---- */
+.section-number {
+  display: block;
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  margin-bottom: 0.75rem;
+}
+.title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(1.75rem, 3.5vw, 2.75rem);
+  margin: 0 0 1.5rem;
+  color: var(--color-text-primary);
+}
+
+/* ---- 01 Intro (hero, dark) ---- */
+#intro {
+  align-items: center;
+  text-align: center;
+}
+#intro .portrait {
+  width: min(100%, 220px);
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-inline: auto;
+  display: block;
+}
+#intro .name {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(2.25rem, 5vw, 3.5rem);
+  margin: 1.5rem 0 0.5rem;
+  color: var(--color-text-primary);
+}
+#intro .role {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 1.0625rem;
+  color: var(--color-text-secondary);
+  margin: 0 0 1.5rem;
+}
+#intro .hook {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.65;
+  color: var(--color-text-secondary);
+  max-width: 620px;
+  margin-inline: auto;
+}
+#intro .scroll-cue {
+  margin-top: 2rem;
+}
+
+/* ---- 02 About ---- */
+#about p {
+  font-family: var(--font-body);
+  font-size: 1.0625rem;
+  line-height: 1.65;
+  color: var(--color-text-secondary);
+  max-width: 680px;
+  margin: 0 0 1.25rem;
+}
+
+/* ---- Timeline (shared: Experience, Work on the side, Education) ---- */
+.timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.timeline-item {
+  padding-block: 1.5rem;
+  border-top: 1px solid var(--color-border);
+}
+.timeline-item:first-child {
+  border-top: none;
+  padding-top: 0;
+}
+.timeline-item .role {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 1rem;
+  color: var(--color-text-primary);
+  margin: 0 0 0.25rem;
+}
+.timeline-item .role .tag {
+  margin-left: 0.5rem;
+  vertical-align: middle;
+}
+.timeline-item .dates {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+  margin: 0 0 0.5rem;
+}
+.timeline-item .description {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.65;
+  color: var(--color-text-secondary);
+  margin: 0 0 0.75rem;
+}
+.timeline-item .card-sub {
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  margin: 0 0 0.5rem;
+}
+.timeline-item .card-sub a {
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.timeline-item .card-sub a:hover {
+  color: var(--color-accent-hover);
+}
+.timeline-item .cta {
+  display: inline-block;
+  margin-bottom: 0.75rem;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.tag {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: 100px;
+  padding: 0.25rem 0.75rem;
+}
+
+/* ---- 05 Off the clock ---- */
+#off .tags {
+  margin-bottom: 1.25rem;
+}
+#off p {
+  font-family: var(--font-body);
+  font-size: 1.0625rem;
+  line-height: 1.65;
+  color: var(--color-text-secondary);
+  max-width: 680px;
+  margin: 0;
+}
+
+/* ---- 07 Publications ---- */
+.articles {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.articles li {
+  padding-block: 1.5rem;
+  border-top: 1px solid var(--color-border);
+}
+.articles li:first-child {
+  border-top: none;
+  padding-top: 0;
+}
+.articles li a {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 1.0625rem;
+  color: var(--color-text-primary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.articles li a:hover {
+  color: var(--color-accent);
+}
+.articles li .venue {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+  margin-top: 0.375rem;
+}
+
+/* ---- Footer ---- */
+main.content > footer {
+  min-height: auto;
+  padding-block: clamp(3rem, 6vw, 5rem);
+}
+footer .subtitle {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  color: var(--color-text-secondary);
+  margin: 0 0 1rem;
+}
+footer .big-email {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(1.75rem, 4vw, 3rem);
+  color: var(--color-text-primary);
+  text-decoration: none;
+  display: inline-block;
+  margin-bottom: 1.5rem;
+  word-break: break-word;
+}
+footer .big-email:hover {
+  color: var(--color-accent);
+}
+footer .copyright {
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+  margin-top: 1.5rem;
+}
+
+/* ---- Lightbox (pure CSS, :target) ---- */
+.lightbox {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(1.5rem, 5vw, 3rem);
+}
+.lightbox:target {
+  display: flex;
+}
+.lightbox-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(48, 46, 44, 0.85);
+}
+.lightbox img {
+  position: relative;
+  max-width: min(900px, 100%);
+  max-height: 85vh;
+  width: auto;
+  border-radius: 12px;
+  object-fit: contain;
+}
+.lightbox-close {
+  position: absolute;
+  top: clamp(1rem, 3vw, 2rem);
+  right: clamp(1rem, 3vw, 2rem);
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--color-bg);
+  color: var(--color-text-primary);
+  box-shadow: 0 2px 8px rgba(48, 46, 44, 0.2);
+}
+.lightbox-close svg {
+  width: 18px;
+  height: 18px;
+  stroke: currentColor;
+  stroke-width: 2;
+  fill: none;
+}

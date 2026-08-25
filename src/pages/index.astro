@@ -1,17 +1,270 @@
 ---
-
+import Layout from "../layouts/Layout.astro";
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<Layout>
+  <section id="intro" class="reveal" data-theme="dark">
+    <div class="slide-inner">
+      <img class="portrait" src="/images/minh.jpeg" alt="Minh Tran — Machine Learning Engineer, Vaisala Xweather" />
+      <h1 class="name">Minh Tran</h1>
+      <p class="role">Machine Learning Engineer, Xweather Labs @ Vaisala Xweather</p>
+      <p class="hook">
+        I love being bossy to computers and have been doing so for a few years.
+        It turns out that computers are quite smart and (un)willing to learn, so
+        I study computer pedagogy.
+      </p>
+      <a class="cta scroll-cue" href="#about">Scroll to explore ↓</a>
+    </div>
+  </section>
+
+  <section id="about" class="reveal">
+    <div class="slide-inner">
+      <span class="section-number">02</span>
+      <h2 class="title">About</h2>
+      <p>Machine Learning Engineer at Vaisala Xweather, currently working on point
+        weather forecasting with classical ML (XGBoost, SVR) after a year building
+        inference pipelines for transformer based precipitation models. Background
+        spans deep learning, 3D reconstruction, and privacy preserving audio ML,
+        with three published papers, a Gaussian splatting implementation, and a
+        recurring theme of picking things apart to see how they work.</p>
+      <p>Outside of work, builds and racks PCs, runs a home Proxmox cluster, and
+        would rather self host something than sign up for it. Into Lego for the same
+        reason: a taste for things that are well engineered and satisfying to
+        assemble, whether physical or digital.</p>
+      <p>There's a pattern underneath all of it: a preference for staying close to
+        the mechanism instead of behind a layer of abstraction, whether that's
+        self hosting a server instead of subscribing to one, or driving a small car
+        that lets him feel the road instead of a bigger one that insulates him from
+        it. Off the clock that shows up as time outdoors, sport, travel, and a
+        general habit of being the one who drives, not just for himself.</p>
+      <p>Believes the most interesting AI work right now doesn't need a
+        hyperscaler's GPU budget. It needs a consumer GPU, curiosity, and a
+        willingness to read the docs.</p>
+      <a class="cta" href="#experience">See my work →</a>
+      <div class="socials">
+        <a href="https://github.com/minhtran0610" target="_blank" rel="noopener noreferrer">GitHub</a>
+        <a href="https://www.linkedin.com/in/minhtran0610" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+        <a href="https://orcid.org/0000-0003-4637-6081" target="_blank" rel="noopener noreferrer">ORCID</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="experience" class="reveal">
+    <div class="slide-inner">
+      <span class="section-number">03</span>
+      <h2 class="title">Experience</h2>
+      <ul class="timeline">
+        <li class="timeline-item">
+          <p class="role">Machine Learning Engineer, Vaisala Xweather</p>
+          <p class="dates">Feb 2026-present</p>
+          <p class="description">Point weather forecasting with classical ML (XGBoost,
+            scikit-learn), contributing to long-term ML/AI prediction capability.</p>
+          <ul class="tags">
+            <li class="tag">XGBoost</li>
+            <li class="tag">scikit-learn</li>
+            <li class="tag">Classical ML</li>
+          </ul>
+        </li>
+        <li class="timeline-item">
+          <p class="role">Junior Deep Learning Engineer, Vaisala Xweather</p>
+          <p class="dates">Jun 2025-Feb 2026</p>
+          <p class="description">Inference and visualization pipelines for a
+            transformer-based, multi-head precipitation model. 20% inference latency
+            reduction via PyTorch/TensorRT model compilation.</p>
+          <ul class="tags">
+            <li class="tag">PyTorch</li>
+            <li class="tag">TensorRT</li>
+            <li class="tag">Transformers</li>
+          </ul>
+        </li>
+        <li class="timeline-item">
+          <p class="role">Thesis Worker, CIVIT (Tampere)</p>
+          <p class="dates">Oct 2024-Dec 2025</p>
+          <p class="description">Implemented Gaussian splatting for a volumetric
+            capture studio.</p>
+          <ul class="tags">
+            <li class="tag">Gaussian Splatting</li>
+            <li class="tag">3D Reconstruction</li>
+          </ul>
+        </li>
+        <li class="timeline-item">
+          <p class="role">Data Scientist, Kempower</p>
+          <p class="dates">May 2023-Oct 2024</p>
+          <p class="description">Cloud-based data science for EV charging
+            infrastructure.</p>
+          <ul class="tags">
+            <li class="tag">Data Science</li>
+            <li class="tag">Cloud</li>
+            <li class="tag">EV Charging</li>
+          </ul>
+        </li>
+        <li class="timeline-item">
+          <p class="role">Research Assistant, Tampere University</p>
+          <p class="dates">2021-2023</p>
+          <p class="description">Arrowhead/MQTT service integration (David Hästbacka);
+            adversarial learning for privacy-preserving audio representations (Tuomas
+            Virtanen's Audio Research Group), the basis for 2 of the 3 papers listed
+            and the BSc thesis.</p>
+          <ul class="tags">
+            <li class="tag">MQTT</li>
+            <li class="tag">Adversarial Learning</li>
+            <li class="tag">Audio ML</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="projects" class="reveal">
+    <div class="slide-inner">
+      <span class="section-number">04</span>
+      <h2 class="title">Work on the side</h2>
+      <ul class="timeline">
+        <li class="timeline-item">
+          <p class="role">World Cup 2026 Prediction Model</p>
+          <p class="description">A neural net (ScoreGridNet) outputs Poisson rate
+            parameters plus a Dixon Coles correlation term, and every betting market is
+            derived from that one coherent probability grid — 1X2, over/under, BTTS,
+            correct score, Asian handicap, not a separate fit per market. Backed by team
+            embeddings, a GRU-form encoder over each team's last 10 matches, and a context
+            MLP (rest days, neutral venue, squad quality, tournament stage). A locally hosted
+            qwen3:9b reads live news RSS feeds and extracts a structured team-form signal —
+            form, injuries, morale, tactical notes — that nudges the predictions. Runs end to
+            end in Docker (scheduler, trainer, and Ollama services) with a Telegram bot firing
+            predictions before kickoff, all on his own hardware.</p>
+          <a class="cta" href="https://github.com/minhtran0610/worldcup_prediction" target="_blank" rel="noopener noreferrer">View code →</a>
+          <ul class="tags">
+            <li class="tag">PyTorch</li>
+            <li class="tag">XGBoost / Dixon-Coles</li>
+            <li class="tag">Docker Compose</li>
+            <li class="tag">Ollama</li>
+            <li class="tag">Telegram Bot API</li>
+          </ul>
+        </li>
+        <li class="timeline-item">
+          <p class="role">Ollama Context-Window Demo</p>
+          <p class="description">A live demo, built for the Vietnamese tech community
+            in Finland, proves Ollama's real truncation behavior on unmodified Finnish
+            statute: overflowing the context budget doesn't quietly drop the excess, it
+            silently truncates to roughly half the configured window with no warning. 32K
+            fails, 128K answers the same legal question correctly — no bigger model
+            required. Entirely local, on a single consumer GPU (RTX 4070 Ti Super, 16GB),
+            running on hardware he owns instead of a cloud API call.</p>
+          <a class="cta" href="https://github.com/minhtran0610/ollama_law_demo" target="_blank" rel="noopener noreferrer">View code →</a>
+          <ul class="tags">
+            <li class="tag">Ollama</li>
+            <li class="tag">Python (uv)</li>
+            <li class="tag">qwen3.5</li>
+          </ul>
+        </li>
+        <li class="timeline-item">
+          <p class="role">Jarvis, a self-hosted AI memory assistant</p>
+          <span class="tag">Paused</span>
+          <p class="description">A two-node, self-hosted system that remembers everything
+            you log from the terminal, then answers questions from full context pulled from
+            your own history — no cloud. A stateless "Thinker" node runs Ollama and only
+            streams tokens. A separate "Librarian" node holds all the state: a Qdrant vector
+            store, a two-stage retrieval pipeline (BGE-M3 narrows to 50, BGE-Reranker-v2-m3
+            narrows that to the best 5), and a FastAPI gateway the CLI talks to over
+            Tailscale. Memory has a lifecycle — raw "hot" logs roll up into weekly "warm"
+            summaries after 7 days, then get evicted after 90 days unless marked
+            significant. A phase 2 roadmap was already designed before phase 1 finished.
+            Paused, not abandoned: it ran on two standalone Fedora servers, and work holds
+            while that hardware folds into the current three-node Proxmox cluster.</p>
+        </li>
+        <li class="timeline-item">
+          <p class="role">Home Lab, a three-node Proxmox cluster</p>
+          <p class="description">Three PCs, each built for a specific job, stacked on a
+            minimalist metal shelf next to a PS5 and a few Lego sets — proof that a home lab
+            can be fast and tidy at once. Node 1 (Ryzen 5 3600, headless, no GPU) handles
+            management and dev. Node 2 (Ryzen 5 7600, dual GPU: RTX 3070 and RTX 3060) runs
+            local LLM inference, water cooled. Node 3 (Intel i5 14600KF, RTX 4070 Ti Super)
+            handles GPU training, currently being rebuilt into a Lian Li Dan B4 SFF case. All
+            three run Proxmox, networked over Tailscale for remote access from anywhere.
+            Cable management and case choice get the same care as the hardware inside them —
+            a good chunk of the time goes into researching parts and cooling.</p>
+          <a class="cta" href="#lightbox-rack">View photo →</a>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="off" class="reveal">
+    <div class="slide-inner">
+      <span class="section-number">05</span>
+      <h2 class="title">Off the clock</h2>
+      <ul class="tags">
+        <li class="tag">Driving, not taxiing</li>
+        <li class="tag">Time outdoors</li>
+        <li class="tag">Sports</li>
+        <li class="tag">Travel</li>
+      </ul>
+      <p>The same instinct that runs the home lab, staying close to the mechanism
+        instead of behind a layer of abstraction, shows up outside of tech too.</p>
+    </div>
+  </section>
+
+  <section id="education" class="reveal">
+    <div class="slide-inner">
+      <span class="section-number">06</span>
+      <h2 class="title">Education</h2>
+      <ul class="timeline">
+        <li class="timeline-item">
+          <p class="role">M.Sc., Signal Processing & Machine Learning, Tampere University</p>
+          <p class="dates">2023-2025</p>
+          <p class="card-sub">Thesis: <a href="https://urn.fi/URN:NBN:fi:tuni-2025122212070">Automated Matting and Gaussian Splatting toward High-Fidelity Volumetric Performance Capture</a></p>
+        </li>
+        <li class="timeline-item">
+          <p class="role">B.Sc., Science and Engineering, Tampere University</p>
+          <p class="dates">2020-2023</p>
+          <p class="card-sub">Thesis: <a href="https://urn.fi/URN:NBN:fi:tuni-202304254453">Learning privacy-preserving representation of audio data with adversarial learning</a></p>
+        </li>
+        <li class="timeline-item">
+          <p class="role">Hanoi-Amsterdam High School for the Gifted (Chemistry)</p>
+          <p class="dates">2017-2020</p>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="publications" class="reveal">
+    <div class="slide-inner">
+      <span class="section-number">07</span>
+      <h2 class="title">Publications</h2>
+      <ul class="articles">
+        <li>
+          <a href="https://doi.org/10.1109/IECON51785.2023.10311779" target="_blank" rel="noopener noreferrer">External Token-Based Authorization of Data-Driven Integrations and Service Compositions in MQTT 5.</a>
+          <span class="venue">IECON 2023.</span>
+        </li>
+        <li>
+          <a href="https://doi.org/10.1109/OJSP.2023.3349113" target="_blank" rel="noopener noreferrer">Adversarial Representation Learning for Robust Privacy Preservation in Audio.</a>
+          <span class="venue">IEEE Open Journal of Signal Processing, 2024.</span>
+        </li>
+        <li>
+          <a href="https://arxiv.org/abs/2308.04960" target="_blank" rel="noopener noreferrer">Representation Learning for Audio Privacy Preservation Using Source Separation and Robust Adversarial Learning.</a>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <footer class="reveal">
+    <div class="slide-inner">
+      <p class="subtitle">Self-hosting by day, overclocking theory by night.</p>
+      <a class="big-email" href="mailto:minhtran0610@gmail.com">minhtran0610@gmail.com</a>
+      <div class="socials">
+        <a href="https://github.com/minhtran0610" target="_blank" rel="noopener noreferrer">GitHub</a>
+        <a href="https://www.linkedin.com/in/minhtran0610" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+        <a href="https://orcid.org/0000-0003-4637-6081" target="_blank" rel="noopener noreferrer">ORCID</a>
+      </div>
+      <p class="copyright">© 2026 Minh Tran.</p>
+    </div>
+  </footer>
+
+  <div id="lightbox-rack" class="lightbox">
+    <a class="lightbox-backdrop" href="#projects" aria-label="Close photo"></a>
+    <img src="/images/pc_rack.jpg" alt="Home lab, three-node Proxmox cluster on a metal shelf" />
+    <a class="lightbox-close" href="#projects" aria-label="Close photo">
+      <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+    </a>
+  </div>
+</Layout>

@@ -115,13 +115,19 @@ Concretely banned, because each one appeared in the failed build:
   reveals the 404. Use the relative form from the File structure section
   below: `<script src="../scripts/reveal.js">`.
 - Writing a second `@import` anywhere in `global.css` other than the
-  two at the very top (Tailwind, then the Google Fonts URL, in that
-  order). CSS requires every `@import` to precede all other rules —
-  one placed after `@theme` or after any selector is invalid CSS, and
-  Astro's build only warns about this, it doesn't fail, so it silently
-  ships broken font loading. Copy DESIGN.md's "Foundational
-  `global.css` block" verbatim, in that exact order; don't re-derive
-  where an `@import` goes from first principles.
+  two at the very top — **the Google Fonts URL first, then
+  `@import "tailwindcss"`** (fonts before Tailwind, not after — the
+  reverse of what feels intuitive). CSS requires every `@import` to
+  precede all other rules — one placed after `@theme` or after any
+  selector is invalid CSS, and Astro's build only warns about this, it
+  doesn't fail, so it silently ships broken font loading. The fonts-
+  before-Tailwind order specifically matters because `@import
+  "tailwindcss"` inlines a large non-import `@layer` block in its
+  place once built; anything after it in source ends up positioned
+  after that inlined content, triggering this exact warning — verified
+  empirically. Copy DESIGN.md's "Foundational `global.css` block"
+  verbatim, in that exact order; don't re-derive where an `@import`
+  goes from first principles.
 - Writing a CSS selector that tries to cover several components at
   once with a wildcard or a bare combinator, e.g. `.timeline-*,` or
   `#work-on-the-side > :,`. Neither is valid CSS — `*` is not a
@@ -202,66 +208,53 @@ experience entries, not one `.map()` over an array. This applies
 everywhere: projects, experience, education, publications, nav links,
 socials.
 
-## File structure — keep it flat
+## File structure — the skeleton is pre-built, don't rebuild it
 
-Build exactly these files, nothing more. Do not split sections into
-separate component files beyond what's listed here — every extra file is
-another prop contract that can drift out of sync with where it's used,
-which is what happened last time (`Project.astro` imported `Card.astro`
-expecting one shape; `Card.astro` rendered a different, empty one).
+Every file in the manifest below **already exists and is already
+correct** — written and visually verified ahead of time specifically so
+you don't have to design, write CSS, or write JavaScript from prose this
+round. Read this section before touching anything; it changes what your
+job actually is.
 
-- `src/layouts/Layout.astro` — `<html>`/`<head>` (title, meta, Google
-  Fonts `<link>`), imports `global.css`, renders `<Header />` (the top
-  nav — see below, not a sidebar), then `<main class="content"><slot
-  /></main>` for the page content, then the fixed `.slide-counter`
-  element. Takes no props beyond an optional page title.
-- `src/components/Header.astro` — the one component split out, since it's
-  reused nowhere else but is visually distinct chrome: the sticky top
-  nav (brand name + the 7 numbered section links). Hardcode the nav
-  items directly in this file; it doesn't need a `nav` prop. This
-  replaced an earlier `Sidebar.astro` — the fixed-left-sidebar layout was
-  tried and deliberately dropped in favor of the full-screen scroll-snap
-  deck (see DESIGN.md's "Why this shape"). If you ever see references to
-  `Sidebar.astro` elsewhere, that's stale — `Header.astro` is current.
-- `src/pages/index.astro` — imports `Layout.astro`, wraps everything in
-  it, and contains every section's markup directly and hardcoded, **in
-  this exact order**: Intro (the hero, `data-theme="dark"`), About,
-  Experience, Work on the side (`id="projects"`), Off the clock,
-  Education, Publications, Footer. Every section is `<section id="..."
-  class="reveal">` wrapping one `<div class="slide-inner">` — see
-  DESIGN.md's "Deck mechanics" for exactly why that wrapper is required
-  and what breaks without it. The one exception is the lightbox
-  (`<div id="lightbox-rack">`), which sits as its own top-level sibling,
-  not inside a section.
-- `src/scripts/reveal.js` — plain vanilla JS doing three related jobs in
-  one file, not three separate scripts: (1) `IntersectionObserver` for
-  the `.reveal` fade-up class, (2) deck tracking — a second
-  `IntersectionObserver` using `rootMargin: '-45% 0px -45% 0px'` (not a
-  `threshold` on the target's own size, which breaks for any section
-  taller than one viewport) to update the slide counter and move
-  `aria-current` on the active nav link, (3) `ArrowDown`/`ArrowUp`
-  keydown paging between slides via `scrollIntoView`, respecting
-  `prefers-reduced-motion`. Full code for all three in DESIGN.md's "Deck
-  mechanics" section — copy it, this took several iterations to get
-  right and a plausible-looking rewrite will likely reintroduce the
-  `threshold: 0.5` bug. It lives under `src/`, so load it with a
-  **relative** `src=` path and no other attributes, e.g. `<script
-  src="../scripts/reveal.js">` from `Layout.astro` — Astro bundles and
-  processes this form automatically. Do not use an absolute path like
-  `/scripts/reveal.js` or `is:inline` for this file; those only apply to
-  scripts served as-is from `public/`, and this file isn't there.
-- `src/styles/global.css` — starts as just `@import "tailwindcss";` (one
-  line, no theme tokens yet — check it yourself before assuming
-  otherwise). Paste DESIGN.md's "Foundational `global.css` block"
-  verbatim, in the exact order given there — it's already the full,
-  ordered concatenation of both `@import`s, the `@theme {}` tokens,
-  the `section[data-theme="dark"]` override, the deck/scroll-snap CSS,
-  and the `.reveal`/reduced-motion rules, so there's nothing left to
-  assemble or reorder yourself. This is foundational — do it first,
-  before any component references a token or class that doesn't exist
-  yet. Component-specific CSS (nav, timeline, tags, lightbox, etc.)
-  still has to be written from the prose specs further down in
-  DESIGN.md — only the foundational block is copy-paste.
+- `src/layouts/Layout.astro` — done. Correct `<html>`/`<head>`, imports
+  `global.css` via frontmatter, renders `<Header />`, `<slot />`, the
+  slide counter, and `reveal.js`.
+- `src/components/Header.astro` — done. The sticky top nav with all 7
+  numbered links.
+- `src/scripts/reveal.js` — done. Reveal-on-scroll, slide counter +
+  active-nav tracking (using the `rootMargin` trick, not a fragile
+  `threshold`), and arrow-key paging.
+- `src/styles/global.css` — done. Both `@import`s (fonts before
+  `tailwindcss` — yes, that order, it's counterintuitive but required),
+  `@theme` tokens, the dark-slide override, deck/scroll-snap mechanics,
+  reveal/reduced-motion rules, and **every component's CSS already
+  written** — nav, hero, about, timeline items, tags, CTAs, socials,
+  publications list, footer, lightbox. There is no CSS left to write.
+  Every class you'll use in `index.astro` (`.timeline-item`, `.tags`
+  `.tag`, `.cta`, `.card-sub`, `.articles`, `.big-email`, etc.) already
+  has a matching rule in this file — use the existing class names
+  exactly as shown in the TODO comments below, don't invent new ones.
+
+**Do not edit any of the four files above.** If something about them
+looks wrong, it almost certainly isn't — re-read DESIGN.md's relevant
+section before concluding a pre-built file is broken, and if you're
+still sure, say so in `PROGRESS.md` and stop rather than rewriting it.
+
+- `src/pages/index.astro` — **this is the only file you touch.** The
+  full section skeleton already exists, in the correct order, with the
+  correct classes, `data-theme="dark"` on `#intro`, the `.slide-inner`
+  wrapper on every section, and the lightbox markup already wired up.
+  The Intro hero (name, role, hook, portrait, nav) and the Off-the-clock
+  tags row are already filled in with real content — leave those alone.
+  Six spots are marked with an HTML comment starting `TODO(opencode):`
+  — About, Experience, Work on the side, the Off-the-clock sentence(s),
+  Education, Publications, plus one more in the footer for the subtitle
+  line. **Your entire job is to replace each of those seven comments
+  with the real content it describes, using CONTENT.md, following the
+  exact markup shape the comment specifies.** This is content
+  substitution, not page design — every class, wrapper, and structural
+  decision is already made. Follow "hardcode, don't loop" below: five
+  literal `<li>` blocks for Experience, not a `.map()`.
 
 Images already exist in the repo as real binary JPEG photos — a marathon
 finish-line shot and a home-lab rack photo, hundreds of KB to several MB
@@ -293,38 +286,30 @@ This has been skipped three build attempts in a row despite being
 marked mandatory below — treat it as a hard precondition, not a
 suggestion you can get to later: **if `todowrite` has not been called
 yet in this session, do not call `write` or `edit` on any file.**
-Calling `todowrite` is the first tool call of the build round, full
-stop, before touching `global.css` or anything else.
+Calling `todowrite` is the first tool call of the round, full stop,
+before touching `index.astro` or anything else.
 
-Call `todowrite` once with the file manifest above as five discrete
-items, in build order: `global.css`
-theme tokens, `Header.astro`, `Layout.astro`, `reveal.js`,
-`index.astro`.
+The task this round is content substitution, not a five-file build —
+see "File structure" above. Call `todowrite` once with these six items,
+one per `TODO(opencode)` comment in `index.astro`, in top-to-bottom
+order: `About paragraphs + footer subtitle`, `Experience (5 entries)`,
+`Work on the side (4 entries)`, `Off the clock sentence(s)`,
+`Education (3 entries)`, `Publications (3 entries)`.
 
-**Never add a sixth item.** If you discover new work mid-build (a CSS
-warning to fix, an extra check to run), fold it into the current
-item's own done-check instead of creating a new todo entry. A todo
-list that keeps growing turn over turn is a sign of thrashing, not
-progress, and re-printing a longer list every turn burns context for
-no benefit — five items in, five items out, no matter how many fix
+**Never add a seventh item.** If you discover new work mid-task (a
+build warning to fix, a class that seems missing), fold it into the
+current item's own done-check instead of creating a new todo entry. A
+todo list that keeps growing turn over turn is a sign of thrashing,
+not progress, and re-printing a longer list every turn burns context
+for no benefit — six items in, six items out, no matter how many fix
 attempts any one of them takes.
 
-Each item's text must state its own definition of done inline — not
-just a filename. A todo item that just says `Header.astro` is not
-usable; it must say what "done" means for that specific item. Derive
-that from the artifact's type, using this table:
-
-| Artifact type | Definition of done |
-|---|---|
-| Config/data file nothing else renders yet (`global.css`'s theme tokens) | `npm run build` passes AND every `--color-*`/`--font-*` token DESIGN.md lists actually exists in the file, including the `section[data-theme="dark"]` override block (check by reading it back, don't assume) |
-| Script/asset not yet mounted on a page (`reveal.js`) | `npm run build` passes AND the exact URL it will be loaded from actually resolves (curl/fetch it once the dev server is up — this is a 404 check, not a full browser check) |
-| Component with no independent render target (`Header.astro` before `Layout.astro` exists) | Cannot be `completed` alone. Leave it `in_progress`; its done-check is deferred to the first item that mounts it on an actual page |
-| First page a set of components gets mounted on (`Layout.astro`, once it wraps `Header.astro`) | `npm run build` passes AND an `agent-browser` check scoped to only what should already be true at this point (e.g. top nav visible and sticky, all 7 nav links present, no console errors) — not the full final spec, since the rest of the page legitimately doesn't exist yet |
-| Final deliverable (`index.astro`) | `npm run build` passes AND the full Visual validation checklist below (all seven sections in the correct order, exactly one dark slide, deck mechanics working, full DESIGN.md compliance, no console errors) |
-
-Mark an item `in_progress` when you start it, and `completed` only once
-its own stated done-check has actually been run and passed in the
-current turn — not when the file merely exists.
+Each item's definition of done is the same shape for all six: the
+comment for that section has been replaced with real markup following
+the exact shape the comment specified, `npm run build` passes with no
+new warnings, and the content matches CONTENT.md (verbatim where the
+comment says verbatim, e.g. Skills tags and the Off-the-clock tag row
+— those are already written into `index.astro`, don't re-derive them).
 
 This list is the source of truth for how far the build actually got,
 not a guess from inspecting file contents. If you are resuming a
