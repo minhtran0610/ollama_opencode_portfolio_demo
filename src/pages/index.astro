@@ -119,73 +119,28 @@ import Layout from "../layouts/Layout.astro";
     <div class="slide-inner">
       <span class="section-number">04</span>
       <h2 class="title">Work on the side</h2>
-      <ul class="timeline">
-        <li class="timeline-item">
-          <p class="role">World Cup 2026 Prediction Model</p>
-          <p class="description">A neural net (ScoreGridNet) outputs Poisson rate
-            parameters plus a Dixon Coles correlation term, and every betting market is
-            derived from that one coherent probability grid — 1X2, over/under, BTTS,
-            correct score, Asian handicap, not a separate fit per market. Backed by team
-            embeddings, a GRU-form encoder over each team's last 10 matches, and a context
-            MLP (rest days, neutral venue, squad quality, tournament stage). A locally hosted
-            qwen3:9b reads live news RSS feeds and extracts a structured team-form signal —
-            form, injuries, morale, tactical notes — that nudges the predictions. Runs end to
-            end in Docker (scheduler, trainer, and Ollama services) with a Telegram bot firing
-            predictions before kickoff, all on his own hardware.</p>
-          <a class="cta" href="https://github.com/minhtran0610/worldcup_prediction" target="_blank" rel="noopener noreferrer">View code →</a>
-          <ul class="tags">
-            <li class="tag">PyTorch</li>
-            <li class="tag">XGBoost / Dixon-Coles</li>
-            <li class="tag">Docker Compose</li>
-            <li class="tag">Ollama</li>
-            <li class="tag">Telegram Bot API</li>
-          </ul>
-        </li>
-        <li class="timeline-item">
-          <p class="role">Ollama Context-Window Demo</p>
-          <p class="description">A live demo, built for the Vietnamese tech community
-            in Finland, proves Ollama's real truncation behavior on unmodified Finnish
-            statute: overflowing the context budget doesn't quietly drop the excess, it
-            silently truncates to roughly half the configured window with no warning. 32K
-            fails, 128K answers the same legal question correctly — no bigger model
-            required. Entirely local, on a single consumer GPU (RTX 4070 Ti Super, 16GB),
-            running on hardware he owns instead of a cloud API call.</p>
-          <a class="cta" href="https://github.com/minhtran0610/ollama_law_demo" target="_blank" rel="noopener noreferrer">View code →</a>
-          <ul class="tags">
-            <li class="tag">Ollama</li>
-            <li class="tag">Python (uv)</li>
-            <li class="tag">qwen3.5</li>
-          </ul>
-        </li>
-        <li class="timeline-item">
-          <p class="role">Jarvis, a self-hosted AI memory assistant</p>
-          <span class="tag">Paused</span>
-          <p class="description">A two-node, self-hosted system that remembers everything
-            you log from the terminal, then answers questions from full context pulled from
-            your own history — no cloud. A stateless "Thinker" node runs Ollama and only
-            streams tokens. A separate "Librarian" node holds all the state: a Qdrant vector
-            store, a two-stage retrieval pipeline (BGE-M3 narrows to 50, BGE-Reranker-v2-m3
-            narrows that to the best 5), and a FastAPI gateway the CLI talks to over
-            Tailscale. Memory has a lifecycle — raw "hot" logs roll up into weekly "warm"
-            summaries after 7 days, then get evicted after 90 days unless marked
-            significant. A phase 2 roadmap was already designed before phase 1 finished.
-            Paused, not abandoned: it ran on two standalone Fedora servers, and work holds
-            while that hardware folds into the current three-node Proxmox cluster.</p>
-        </li>
-        <li class="timeline-item">
-          <p class="role">Home Lab, a three-node Proxmox cluster</p>
-          <p class="description">Three PCs, each built for a specific job, stacked on a
-            minimalist metal shelf next to a PS5 and a few Lego sets — proof that a home lab
-            can be fast and tidy at once. Node 1 (Ryzen 5 3600, headless, no GPU) handles
-            management and dev. Node 2 (Ryzen 5 7600, dual GPU: RTX 3070 and RTX 3060) runs
-            local LLM inference, water cooled. Node 3 (Intel i5 14600KF, RTX 4070 Ti Super)
-            handles GPU training, currently being rebuilt into a Lian Li Dan B4 SFF case. All
-            three run Proxmox, networked over Tailscale for remote access from anywhere.
-            Cable management and case choice get the same care as the hardware inside them —
-            a good chunk of the time goes into researching parts and cooling.</p>
-          <a class="cta" href="#lightbox-rack">View photo →</a>
-        </li>
-      </ul>
+      <!--
+        TODO(opencode): replace this comment with 4 literal
+        <li class="timeline-item"> blocks from CONTENT.md's "## Projects"
+        section, in the order listed there (World Cup, Context-Window
+        Demo, Jarvis, Home Lab). Same markup shape as Experience above,
+        but order within each item is title -> description -> CTA link
+        -> tags (CTA before tags, not after):
+          <li class="timeline-item">
+            <p class="role">{title}</p>
+            <p class="description">{Hook + What it does folded together}</p>
+            <a class="cta" href="{link}" target="_blank" rel="noopener noreferrer">View code →</a>
+            <ul class="tags"><li class="tag">{Stack item}</li>...</ul>
+          </li>
+        Exceptions (see CONTENT.md's rendering note):
+        - Jarvis: no <a class="cta">, add a small
+          <span class="tag">Paused</span> inline next to the title instead.
+          It still gets a <ul class="tags"> row from its Stack line.
+        - Home Lab: no <ul class="tags"> at all. Its CTA is
+          <a class="cta" href="#lightbox-rack">View photo →</a> — this
+          opens the pure-CSS lightbox already built into this page
+          (see #lightbox-rack near the bottom), do not build a new one.
+      -->
     </div>
   </section>
 

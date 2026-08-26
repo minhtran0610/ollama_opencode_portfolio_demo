@@ -240,21 +240,21 @@ looks wrong, it almost certainly isn't — re-read DESIGN.md's relevant
 section before concluding a pre-built file is broken, and if you're
 still sure, say so in `PROGRESS.md` and stop rather than rewriting it.
 
-- `src/pages/index.astro` — **this is the only file you touch.** The
-  full section skeleton already exists, in the correct order, with the
-  correct classes, `data-theme="dark"` on `#intro`, the `.slide-inner`
-  wrapper on every section, and the lightbox markup already wired up.
-  The Intro hero (name, role, hook, portrait, nav) and the Off-the-clock
-  tags row are already filled in with real content — leave those alone.
-  Six spots are marked with an HTML comment starting `TODO(opencode):`
-  — About, Experience, Work on the side, the Off-the-clock sentence(s),
-  Education, Publications, plus one more in the footer for the subtitle
-  line. **Your entire job is to replace each of those seven comments
-  with the real content it describes, using CONTENT.md, following the
-  exact markup shape the comment specifies.** This is content
-  substitution, not page design — every class, wrapper, and structural
-  decision is already made. Follow "hardcode, don't loop" below: five
-  literal `<li>` blocks for Experience, not a `.map()`.
+- `src/pages/index.astro` — **this is the only file you touch, and
+  only one part of it.** The full section skeleton already exists, in
+  the correct order, with the correct classes, `data-theme="dark"` on
+  `#intro`, the `.slide-inner` wrapper on every section, and the
+  lightbox markup already wired up. Every section already has real,
+  final content — Intro, About, Experience, Off-the-clock, Education,
+  Publications, and the footer are all done. **Leave all of those
+  alone.** Exactly one spot is marked with an HTML comment starting
+  `TODO(opencode):`, inside "Work on the side." **Your entire job is
+  to replace that one comment with the real content it describes,
+  using CONTENT.md's "## Projects" section, following the exact markup
+  shape the comment specifies.** This is content substitution for a
+  single section, not page design — every class, wrapper, and
+  structural decision is already made. Follow "hardcode, don't loop"
+  below: four literal `<li>` blocks, not a `.map()`.
 
 Images already exist in the repo as real binary JPEG photos — a marathon
 finish-line shot and a home-lab rack photo, hundreds of KB to several MB
@@ -289,27 +289,26 @@ yet in this session, do not call `write` or `edit` on any file.**
 Calling `todowrite` is the first tool call of the round, full stop,
 before touching `index.astro` or anything else.
 
-The task this round is content substitution, not a five-file build —
-see "File structure" above. Call `todowrite` once with these six items,
-one per `TODO(opencode)` comment in `index.astro`, in top-to-bottom
-order: `About paragraphs + footer subtitle`, `Experience (5 entries)`,
-`Work on the side (4 entries)`, `Off the clock sentence(s)`,
-`Education (3 entries)`, `Publications (3 entries)`.
+The task this round is smaller still: every section except one is
+already filled in with real, final content — About, Experience,
+Off-the-clock, Education, Publications, and the footer are done, don't
+touch them. There is exactly **one** `TODO(opencode)` comment left in
+`index.astro`, in the "Work on the side" section. Call `todowrite`
+once with a single item: `Work on the side (4 entries)`.
 
-**Never add a seventh item.** If you discover new work mid-task (a
-build warning to fix, a class that seems missing), fold it into the
-current item's own done-check instead of creating a new todo entry. A
-todo list that keeps growing turn over turn is a sign of thrashing,
-not progress, and re-printing a longer list every turn burns context
-for no benefit — six items in, six items out, no matter how many fix
-attempts any one of them takes.
+**Never add a second item.** If you discover something else that looks
+unfinished elsewhere on the page, it isn't — those sections are
+intentionally done and out of scope this round. Fold any genuinely
+new finding into the one item's done-check or into `PROGRESS.md`,
+don't create a second todo entry.
 
-Each item's definition of done is the same shape for all six: the
-comment for that section has been replaced with real markup following
-the exact shape the comment specified, `npm run build` passes with no
-new warnings, and the content matches CONTENT.md (verbatim where the
-comment says verbatim, e.g. Skills tags and the Off-the-clock tag row
-— those are already written into `index.astro`, don't re-derive them).
+That one item's definition of done: the comment has been replaced with
+real markup following the exact shape the comment specifies,
+`npm run build` passes with no new warnings, and the content matches
+CONTENT.md's "## Projects" section — including Jarvis's Stack tags
+(easy to drop by mistake, it still gets a `<ul class="tags">` row
+despite having no CTA link) and Home Lab's lightbox CTA instead of a
+tags row.
 
 This list is the source of truth for how far the build actually got,
 not a guess from inspecting file contents. If you are resuming a
@@ -429,6 +428,19 @@ image path resolves. Passing it is necessary but not sufficient. Before
 reporting Phase 4 or the build as complete, do all of the following
 using the `agent-browser` CLI.
 
+**Exception — content-fill-only rounds.** If this round's task is the
+reduced scope described in "File structure" above (the skeleton is
+pre-built, you only replaced `TODO(opencode)` comments in
+`index.astro` with content), the full six-step checklist below is
+overkill: it exists to catch deck-mechanics and CSS regressions, and
+neither changed this round. Instead: `npm run build` passes, one
+`agent-browser` full-page screenshot of whichever section has the most
+new content (usually Experience or Work on the side) to confirm the
+text actually rendered inside the existing markup, and one
+`agent-browser console` check for errors. That's sufficient — don't
+run the full 7-section walkthrough or open the lightbox for a
+content-only round.
+
 **Do not use Playwright for this, in any form.** Not the Playwright MCP
 server, not `npx playwright install`, not `import('playwright')` or
 `import('playwright-core')` in a raw Node script, not a
@@ -461,6 +473,16 @@ without it. Subsequent commands in the same session (`screenshot`,
 `click`, `get`, `eval`, ...) don't need the flag repeated. Run
 `agent-browser skills get core --full` once if you want the fuller
 command reference and copy-paste examples; it ships with the CLI.
+
+**If `agent-browser open` ever fails with `No usable sandbox!` anyway**
+(the flag got dropped, mistyped, or split across arguments by the
+shell), immediately retry the exact same `open` call with `--args
+"--no-sandbox"` present and correct. Do not stop, do not move on, and
+do not just note the error — this has previously caused a session to
+go completely silent for over 30 minutes with no further output and no
+crash, losing the entire round. A launch failure here is always
+recoverable by retrying with the flag; it is never a reason to end the
+turn.
 
 1. Make sure the dev server is running (`npx astro dev --background`;
    check the actual port with `npx astro dev status` — don't assume 4321).
@@ -520,3 +542,13 @@ order, in the same turn, scrolled through every section — not just the
 first screenful. If you stop the dev server before you've done all six,
 the visual validation has not happened yet, no matter how many times
 you've opened the browser.
+
+**Never try to stop or clean up the dev server, a preview server, or
+`/tmp` scratch files as a finishing step, for either validation path
+above.** There is no requirement to leave a clean process table —
+leaving the dev server running is correct and expected. This was tried
+once and cost roughly 9 minutes: three separate `pkill -f "astro
+preview"` / `rm -rf /tmp/...` attempts each hung for the full 120s
+tool timeout for no benefit, right at the very end of an otherwise
+fast, successful round. When you've finished validation, just report
+done — don't add a cleanup step nobody asked for.
