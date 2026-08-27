@@ -14,9 +14,12 @@ spec (colors, type, layout) is a separate file that references this one.
   [ORCID](https://orcid.org/0000-0003-4637-6081)
 - Languages: Vietnamese (native), English (professional), Finnish (elementary)
 - Photo: marathon finish-line shot, Tampere Maraton, medal on, peace sign,
-  approved to replace a corporate headshot. Uploaded file:
-  `E64329BC-DD8C-432A-AD51-6A4624BD154B_1_105_c.jpeg`, drop into the
-  project's image assets (e.g. `public/images/minh-hero.jpg`).
+  approved to replace a corporate headshot. Already in the repo at
+  `public/images/minh.jpeg` (web path `/images/minh.jpeg`) — use this
+  exact filename. Originally uploaded as
+  `E64329BC-DD8C-432A-AD51-6A4624BD154B_1_105_c.jpeg` and renamed on
+  import; that original filename is historical context only, not a
+  filename to reference anywhere.
 
 **One-line hook (locked, use verbatim):**
 "I love being bossy to computers and have been doing so for a few years.
@@ -53,6 +56,20 @@ willingness to read the docs.
 Ordered by how well they represent "the vibe": DIY, self hosted,
 technically real. Not chronological. Jarvis stays at #3 for now since it's
 unfinished, even though it's technically the deepest entry here.
+
+**Rendering note (locked, decided after review):** a quiet list, same
+treatment as Experience — no cards, no grid, no thumbnail images inline.
+For each item: title, then the Hook + What it does folded into one
+description paragraph (the DIY spirit detail can fold in too if it's not
+too long), then the CTA link, then the Stack as a small tag row —
+**in that order, CTA before tags**, so the action sits right after the
+pitch instead of behind a row of pills. Jarvis has no CTA link (its repo
+stays unlinked — decided, don't add one) but does get a small "Paused"
+tag next to its title. Home Lab has no Stack tag row and no inline
+image; instead its CTA is "View photo →", which opens the rack photo in
+a lightbox (click to open, click backdrop or × to close) rather than
+showing it inline — see DESIGN.md's Lightbox component for the exact
+zero-JS pattern.
 
 ### 1. World Cup 2026 Prediction Model
 - **Hook:** A joint scoreline model that derives every betting market, 1X2,
@@ -135,6 +152,9 @@ unfinished, even though it's technically the deepest entry here.
 - **Stack:** Proxmox, ZFS, Tailscale, Ollama, CUDA passthrough
 - **Link:** no repo, photos only for now. A written post about the build
   could follow later, but no need to force it before the talk.
+- **Image:** already in the repo at `public/images/pc_rack.jpg` (web path
+  `/images/pc_rack.jpg`) — use this exact filename in place of a link,
+  per the design spec.
 
 
 ## Off the Clock
@@ -147,27 +167,40 @@ instead of behind a layer of abstraction, shows up outside of tech too.
 - Outdoors, sport, and travel: spends as much time away from the GPUs as
   the GPUs allow.
 
+Render as a compact tag row (locked, don't re-derive): Driving, not
+taxiing · Time outdoors · Sports · Travel
+
 (This section would get sharper with specifics: name a sport, a car, or a
 trip that actually mattered, and it'll fold in.)
 
 ## Experience (compressed, not a CV)
 
+Render as a quiet vertical list, most recent first — 5 entries, all 5
+render, none dropped for space. Each entry gets a short "Skills" tag row
+(small pills) alongside the one-line description; tags below are locked,
+don't re-derive them from the prose each time.
+
 - **Machine Learning Engineer, Vaisala Xweather** (Feb 2026-present):
   point weather forecasting with classical ML (XGBoost, scikit-learn),
   contributing to long-term ML/AI prediction capability.
+  Skills: XGBoost, scikit-learn, Classical ML
 - **Junior Deep Learning Engineer, Vaisala Xweather** (Jun 2025-Feb
   2026): inference and visualization pipelines for a transformer-based,
   multi-head precipitation model. 20% inference latency reduction via
   PyTorch/TensorRT model compilation.
+  Skills: PyTorch, TensorRT, Transformers
 - **Thesis Worker, CIVIT (Tampere)** (Oct 2024-Dec 2025): implemented
   Gaussian splatting for a volumetric capture studio.
+  Skills: Gaussian Splatting, 3D Reconstruction
 - **Data Scientist, Kempower** (May 2023-Oct 2024): cloud based data
   science for EV charging infrastructure.
+  Skills: Data Science, Cloud, EV Charging
 - **Research Assistant, Tampere University** (2021-2023): Arrowhead/MQTT
   service integration (David Hästbacka); adversarial learning for
   privacy preserving audio representations (Tuomas Virtanen's Audio
   Research Group), the basis for 2 of the 3 papers below and the BSc
   thesis.
+  Skills: MQTT, Adversarial Learning, Audio ML
 
 ## Education
 
